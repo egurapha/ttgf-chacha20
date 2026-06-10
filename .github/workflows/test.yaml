@@ -26,10 +26,11 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          make clean
-          make
-          # make will return success even if the test fails, so check for failure in the results.xml
-          ! grep failure results.xml
+          pytest -v
+          # make clean
+          # make
+          ## make returns success even if the test fails, so check results.xml
+          # ! grep failure results.xml
 
       - name: Test Summary
         uses: test-summary/action@v2.4
