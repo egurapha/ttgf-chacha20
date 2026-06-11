@@ -177,7 +177,7 @@ def print_hex(label, data):
 def test_quarter_round():
     """RFC 8439 Section 2.1.1 — Quarter Round test."""
     print("=" * 60)
-    print("TEST: Quarter Round (RFC 8439 §2.1.1)")
+    print("TEST: Quarter Round (RFC 8439 section 2.1.1)")
     print("=" * 60)
 
     state = [
@@ -231,7 +231,7 @@ def test_quarter_round():
 def test_chacha20_block():
     """RFC 8439 Section 2.3.2 — Block function test."""
     print("\n" + "=" * 60)
-    print("TEST: ChaCha20 Block (RFC 8439 §2.3.2)")
+    print("TEST: ChaCha20 Block (RFC 8439 section 2.3.2)")
     print("=" * 60)
 
     # list of 32 ints, enforced to be 8 bits each = 256 bits for key.
@@ -375,7 +375,7 @@ def test_chacha20_block():
 def test_chacha20_encryption():
     """RFC 8439 Section 2.4.2 — Encryption test."""
     print("\n" + "=" * 60)
-    print("TEST: ChaCha20 Encryption (RFC 8439 §2.4.2)")
+    print("TEST: ChaCha20 Encryption (RFC 8439 section 2.4.2)")
     print("=" * 60)
 
     # 32 bytes.

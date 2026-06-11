@@ -3,7 +3,7 @@
 """Unit test for the `quarter_round` module.
 
 Two checks:
-  * RFC 8439 §2.1.1 single quarter-round vector (independent reference values).
+  * RFC 8439 section 2.1.1 single quarter-round vector (independent reference values).
   * Random cross-check against the Python reference (chacha20_ref.py).
 
 `chacha20_ref` is made importable by test/conftest.py.
@@ -46,11 +46,11 @@ async def run_qr(dut, a, b, c, d):
 
 @cocotb.test()
 async def rfc_2_1_1_vector(dut):
-    """RFC 8439 §2.1.1 single quarter-round test vector."""
+    """RFC 8439 section 2.1.1 single quarter-round test vector."""
     got = await run_qr(dut, 0x11111111, 0x01020304, 0x9B8D6F43, 0x01234567)
     exp = (0xEA2A92F4, 0xCB1CF8CE, 0x4581472E, 0x5881C4BB)
     assert got == exp, (
-        "RFC §2.1.1 mismatch:\n"
+        "RFC section 2.1.1 mismatch:\n"
         f"  got = {[hex(x) for x in got]}\n"
         f"  exp = {[hex(x) for x in exp]}"
     )
