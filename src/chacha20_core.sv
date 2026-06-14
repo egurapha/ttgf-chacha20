@@ -19,7 +19,7 @@ module chacha20_core (
 );
     // Registers.
     logic [31:0] s[16];  // 32 bits, 16 element state matrix.
-    logic [31:0] init[16];  // Save initial state.
+    logic [31:0] iw[16];
     logic [4:0] step;  // counter for the number of quarter rounds.
     logic done_r;
     assign done = done_r;
@@ -35,7 +35,6 @@ module chacha20_core (
         IDLE,
         INIT,
         ROUND,
-        ADD,
         DONE
     } state_t;
     state_t fsm;
@@ -88,8 +87,28 @@ module chacha20_core (
         .d_out(d3_out)
     );
 
-    // Quarter Round Routing.
+    // Routing.
     always_comb begin
+        // Initial State Addition.
+        // build wire matrix.
+        iw[0]  = C0;
+        iw[1]  = C1;
+        iw[2]  = C2;
+        iw[3]  = C3;
+        iw[12] = counter;
+        for (int i = 0; i < 8; i++) begin
+            iw[4+i] = key[32*i+:32];
+        end
+        iw[12] = counter;
+        for (int i = 0; i < 3; i++) begin
+            iw[13+i] = nonce[32*i+:32];
+        end
+        // add to state.
+        for (int i = 0; i < 16; i++) begin
+            block[32*i+:32] = s[i] + iw[i];
+        end
+
+        // Quarter Round.
         if (!step[0]) begin  // if even, do columns.
             a0_in = s[0];
             b0_in = s[4];
@@ -144,22 +163,15 @@ module chacha20_core (
                     s[1] <= C1;
                     s[2] <= C2;
                     s[3] <= C3;
-                    init[0] <= C0;
-                    init[1] <= C1;
-                    init[2] <= C2;
-                    init[3] <= C3;
                     // Keys.
                     for (int i = 0; i < 8; i++) begin
                         s[4+i] <= key[32*i+:32];
-                        init[4+i] <= key[32*i+:32];
                     end
                     // Counter.
                     s[12] <= counter;
-                    init[12] <= counter;
                     // Nonce.
                     for (int i = 0; i < 3; i++) begin
                         s[13+i] <= nonce[32*i+:32];
-                        init[13+i] <= nonce[32*i+:32];
                     end
                     // Set step to 0.
                     step <= 5'd0;
@@ -206,14 +218,8 @@ module chacha20_core (
                     end
                     step <= step + 5'd1;
                     if (step == 5'd19) begin
-                        fsm <= ADD;  // 20 steps x 4 rounds.
+                        fsm <= DONE;  // 20 steps x 4 rounds.
                     end
-                end
-                ADD: begin
-                    for (int i = 0; i < 16; i++) begin
-                        block[32*i+:32] <= s[i] + init[i];
-                    end
-                    fsm <= DONE;
                 end
                 DONE: begin
                     done_r <= 1'b1;
