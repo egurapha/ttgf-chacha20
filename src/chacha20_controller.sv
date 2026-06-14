@@ -28,15 +28,16 @@ module chacha20_controller (
 );
     // Registers.
     logic [255:0] key_r;
-    logic [ 95:0] nonce_r;
-    logic [ 31:0] ctr_r;
-    logic [  7:0] cmd_r;
-    logic [  7:0] payload_cnt;
-    logic [  7:0] byte_offset;
-    logic [  7:0] blocks_left;
-    logic [ 15:0] crypt_len;
-    logic [  7:0] ks_byte;
-    logic [  6:0] ks_idx;
+    logic [95:0] nonce_r;
+    logic [31:0] ctr_r;
+    logic [7:0] cmd_r;
+    logic [7:0] payload_cnt;
+    logic [7:0] byte_offset;
+    logic [7:0] blocks_left;
+    logic [15:0] crypt_len;
+    logic [7:0] ks_byte;
+    logic [6:0] ks_idx;
+    logic done_prev;
 
     // Command Constants.
     localparam logic [7:0] CMD_LOAD_KEY = 8'h01;
@@ -73,9 +74,11 @@ module chacha20_controller (
         if (!rst_n) begin
             fsm <= IDLE;
             err <= 1'b0;
+            done_prev <= 1'b0;
         end else begin
             core_start <= 1'b0;
             tx_send <= 1'b0;
+            done_prev <= core_done;
             case (fsm)
                 IDLE: begin
                     if (rx_valid) begin
@@ -136,10 +139,58 @@ module chacha20_controller (
                 RX_LEN: begin
                 end
                 APPLY: begin
+                    case (cmd_r)
+                        CMD_LOAD_KEY: begin
+                            fsm <= IDLE;
+                        end
+                        CMD_LOAD_NONCE: begin
+                            fsm <= IDLE;
+                        end
+                        CMD_LOAD_CTR: begin
+                            fsm <= IDLE;
+                        end
+                        CMD_GEN: begin
+                            if (blocks_left == 0) begin
+                                fsm <= IDLE;
+                            end else begin
+                                ks_idx <= 0;
+                                core_start <= 1'b1;
+                                fsm <= RUN_GEN;
+                            end
+                        end
+                        default: begin
+                            err <= 1'b1;
+                        end
+                    endcase
                 end
                 RUN_GEN: begin
+                    // wait until the core_block is computed by checking for
+                    // core_done == 1. make sure done_prev == 0 to account for
+                    // the core_done being held high within the core.
+                    if (core_done && !done_prev) begin
+                        fsm <= STREAM_GEN;
+                    end
                 end
                 STREAM_GEN: begin
+                    if (ks_idx < 64) begin
+                        if (!tx_busy && !tx_send) begin
+                            tx_data <= ks_byte;
+                            tx_send <= 1'b1;  // gets reset to 0 in the top else.
+                            ks_idx  <= ks_idx + 1;
+                        end
+                    end else begin  // if ks_idx == 64, completed block.
+                        if (blocks_left > 1) begin
+                            ctr_r <= ctr_r + 1;  // advance core counter.
+                            blocks_left <= blocks_left - 1;
+                            ks_idx <= 0;  // reset byte index in the keystream.
+                            core_start <= 1'b1;  // start next block generation.
+                            fsm <= RUN_GEN;  // wait until core_done.
+                        end else begin
+                            // if blocks_left == 1, we've already delivered
+                            // that block, so we are done.
+                            fsm <= IDLE;
+                        end
+                    end
                 end
                 RUN_CRYPT: begin
                 end
