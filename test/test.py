@@ -22,7 +22,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 sys.path.insert(0, os.path.dirname(__file__))  # make chacha20_ref importable
 import chacha20_ref
 
-BAUD_DIV = 434  # silicon default (baked into the gate-level netlist)
+BAUD_DIV = 87  # silicon default (10 MHz / 115200; baked into the gate-level netlist)
 RX_BIT = 3  # ui_in[3]
 TX_BIT = 4  # uo_out[4]
 
