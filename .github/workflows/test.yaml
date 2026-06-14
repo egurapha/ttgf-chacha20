@@ -64,10 +64,8 @@ jobs:
           ./synth_check.sh chacha20_core
 
   # Top-level integration test via the Tiny Tapeout Makefile (tb.v + cocotb),
-  # including gate-level sign-off (make GATES=yes). Enable once the top module
-  # tt_um_egurapha_chacha20 is implemented by removing `if: false`.
+  # including gate-level sign-off (make GATES=yes).
   top-level:
-    if: false
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repo
