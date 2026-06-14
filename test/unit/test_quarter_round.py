@@ -30,18 +30,26 @@ def ref_quarter_round(a, b, c, d):
 
 
 async def run_qr(dut, a, b, c, d):
-    """Drive the four inputs, let the combinational logic settle, read outputs."""
-    dut.a_in.value = a
-    dut.b_in.value = b
-    dut.c_in.value = c
-    dut.d_in.value = d
-    await Timer(1, unit="ns")
-    return (
-        int(dut.a_out.value),
-        int(dut.b_out.value),
-        int(dut.c_out.value),
-        int(dut.d_out.value),
-    )
+    """Compose the 4 staged sub-ops into a full quarter-round.
+
+    `quarter_round` is now pipelined into 4 stages (one ARX op each), selected by
+    `stage`. The module is still combinational per stage, so a full quarter-round
+    is reconstructed by feeding each stage's output back in as the next stage's
+    input, for stage = 0, 1, 2, 3. The composed result equals the original
+    one-shot quarter-round, so the RFC / reference checks below are unchanged.
+    """
+    vals = (a, b, c, d)
+    for st in range(4):
+        dut.stage.value = st
+        dut.a_in.value, dut.b_in.value, dut.c_in.value, dut.d_in.value = vals
+        await Timer(1, unit="ns")
+        vals = (
+            int(dut.a_out.value),
+            int(dut.b_out.value),
+            int(dut.c_out.value),
+            int(dut.d_out.value),
+        )
+    return vals
 
 
 @cocotb.test()

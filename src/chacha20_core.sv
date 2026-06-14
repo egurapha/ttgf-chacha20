@@ -23,6 +23,7 @@ module chacha20_core (
     logic [4:0] step;  // counter for the number of quarter rounds.
     logic done_r;
     assign done = done_r;
+    logic [1:0] stage;
 
     // Constants.
     localparam logic [31:0] C0 = 32'h61707865;
@@ -47,6 +48,7 @@ module chacha20_core (
 
     // Quarter Round Modules.
     quarter_round qr0 (
+        .stage(stage),
         .a_in (a0_in),
         .b_in (b0_in),
         .c_in (c0_in),
@@ -57,6 +59,7 @@ module chacha20_core (
         .d_out(d0_out)
     );
     quarter_round qr1 (
+        .stage(stage),
         .a_in (a1_in),
         .b_in (b1_in),
         .c_in (c1_in),
@@ -67,6 +70,7 @@ module chacha20_core (
         .d_out(d1_out)
     );
     quarter_round qr2 (
+        .stage(stage),
         .a_in (a2_in),
         .b_in (b2_in),
         .c_in (c2_in),
@@ -77,6 +81,7 @@ module chacha20_core (
         .d_out(d2_out)
     );
     quarter_round qr3 (
+        .stage(stage),
         .a_in (a3_in),
         .b_in (b3_in),
         .c_in (c3_in),
@@ -175,6 +180,8 @@ module chacha20_core (
                     end
                     // Set step to 0.
                     step <= 5'd0;
+                    // Set stage.
+                    stage <= 2'd0;
                     // Start applying quarter rounds.
                     fsm <= ROUND;
                     // Not Done.
@@ -216,9 +223,12 @@ module chacha20_core (
                         s[9]  <= c3_out;
                         s[14] <= d3_out;
                     end
-                    step <= step + 5'd1;
-                    if (step == 5'd19) begin
-                        fsm <= DONE;  // 20 steps x 4 rounds.
+                    stage <= stage + 2'd1;  // note wrapping.
+                    if (stage == 2'd3) begin
+                        step <= step + 5'd1;
+                        if (step == 5'd19) begin
+                            fsm <= DONE;
+                        end
                     end
                 end
                 DONE: begin

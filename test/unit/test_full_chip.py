@@ -24,7 +24,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 
 import chacha20_ref
 
-BAUD_DIV = int(os.getenv("FULL_CHIP_BAUD_DIV", "8"))
+BAUD_DIV = int(os.getenv("FULL_CHIP_BAUD_DIV", "16"))  # >8.4 so a byte never lands mid-block (pipelined core ~84 cyc)
 CLK_PERIOD_NS = 10
 
 RX_BIT = 3  # ui_in[3]

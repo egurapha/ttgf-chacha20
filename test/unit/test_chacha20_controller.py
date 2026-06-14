@@ -72,7 +72,7 @@ async def send_frame(dut, cmd: int, payload: bytes):
         await RisingEdge(dut.clk)
 
 
-async def send_data_byte(dut, value: int, gap: int = 60):
+async def send_data_byte(dut, value: int, gap: int = 130):
     """Feed one CRYPT data byte, then idle for `gap` cycles.
 
     The controller has no input buffer (SPEC 5.3): it relies on UART being far
@@ -149,7 +149,7 @@ async def run_crypt(dut, key, counter, nonce, data: bytes, timeout_cycles=60000)
     await send_byte(dut, L & 0xFF)  # length low byte (LE)
     await send_byte(dut, (L >> 8) & 0xFF)  # length high byte
 
-    await ClockCycles(dut.clk, 40)  # let the first block compute (APPLY -> RUN_CRYPT)
+    await ClockCycles(dut.clk, 130)  # let the first block compute (pipelined core ~84 cyc)
     for b in data:
         await send_data_byte(dut, b)
 
