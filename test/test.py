@@ -35,7 +35,13 @@ CHECK_BYTES = 16  # keystream prefix to verify (keeps gate-level sim tractable)
 
 
 def _tx(dut):
-    return (int(dut.uo_out.value) >> TX_BIT) & 1
+    # Gate-level sim leaves uo_out with X bits right after reset (cells settle a
+    # cycle later than RTL). Tolerate that: an unresolved bus reads as idle-high
+    # (1), so the monitor simply waits through the startup-X window.
+    try:
+        return (int(dut.uo_out.value) >> TX_BIT) & 1
+    except ValueError:
+        return 1
 
 
 async def serial_send_byte(dut, value):
