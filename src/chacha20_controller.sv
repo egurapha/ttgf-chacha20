@@ -32,11 +32,13 @@ module chacha20_controller (
     logic [31:0] ctr_r;
     logic [7:0] cmd_r;
     logic [7:0] payload_cnt;
-    logic [7:0] byte_offset;
+    logic [7:0] byte_offset;  // index of the current payload byte.
     logic [7:0] blocks_left;
     logic [15:0] crypt_len;
     logic [7:0] ks_byte;
     logic [6:0] ks_idx;
+    logic [7:0] d_in;  // latched incoming data byte.
+    logic pending;  // if 1, we have a latched byte that is not sent yet.
     logic done_prev;
 
     // Command Constants.
@@ -75,6 +77,7 @@ module chacha20_controller (
             fsm <= IDLE;
             err <= 1'b0;
             done_prev <= 1'b0;
+            pending <= 1'b0;
         end else begin
             core_start <= 1'b0;
             tx_send <= 1'b0;
@@ -137,6 +140,16 @@ module chacha20_controller (
                     end
                 end
                 RX_LEN: begin
+                    // process length in little endian order. 2 bytes.
+                    if (rx_valid) begin
+                        if (byte_offset == 0) begin
+                            crypt_len[7:0] <= rx_data;
+                            byte_offset <= 1;
+                        end else begin
+                            crypt_len[15:8] <= rx_data;
+                            fsm <= APPLY;
+                        end
+                    end
                 end
                 APPLY: begin
                     case (cmd_r)
@@ -156,6 +169,15 @@ module chacha20_controller (
                                 ks_idx <= 0;
                                 core_start <= 1'b1;
                                 fsm <= RUN_GEN;
+                            end
+                        end
+                        CMD_CRYPT: begin
+                            if (crypt_len == 0) begin
+                                fsm <= IDLE;
+                            end else begin
+                                ks_idx <= 0;
+                                core_start <= 1'b1;
+                                fsm <= RUN_CRYPT;
                             end
                         end
                         default: begin
@@ -193,8 +215,31 @@ module chacha20_controller (
                     end
                 end
                 RUN_CRYPT: begin
+                    if (core_done && !done_prev) begin
+                        fsm <= CRYPT_DATA;
+                    end
                 end
                 CRYPT_DATA: begin
+                    if (ks_idx == 64) begin  // block complete.
+                        ctr_r <= ctr_r + 1;
+                        ks_idx <= 0;
+                        core_start <= 1'b1;
+                        fsm <= RUN_CRYPT;
+                    end else if (pending) begin
+                        if (!tx_busy && !tx_send) begin
+                            tx_data <= d_in ^ ks_byte;  // XOR.
+                            tx_send <= 1'b1;
+                            ks_idx <= ks_idx + 1;
+                            crypt_len <= crypt_len - 1;
+                            pending <= 1'b0;  // mark data as sent.
+                            if (crypt_len == 1) begin
+                                fsm <= IDLE;
+                            end
+                        end
+                    end else if (rx_valid) begin
+                        d_in <= rx_data;
+                        pending <= 1'b1;
+                    end
                 end
                 default: fsm <= IDLE;
             endcase
