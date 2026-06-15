@@ -192,7 +192,7 @@ def test_chacha20_core():
 
     runner = get_runner(sim)
     runner.build(
-        sources=[src / "chacha20_core.sv", src / "quarter_round.sv"],
+        sources=[src / "chacha20_core.sv", src / "quarter_round.sv", src / "adder32.sv"],
         hdl_toplevel="chacha20_core",
         build_dir=build_dir,
         timescale=("1ns", "1ps"),

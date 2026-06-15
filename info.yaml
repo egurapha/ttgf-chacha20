@@ -23,6 +23,7 @@ project:
     - "chacha20_controller.sv"
     - "chacha20_core.sv"
     - "quarter_round.sv"
+    - "adder32.sv"
     - "uart_rx.sv"
     - "uart_tx.sv"
 

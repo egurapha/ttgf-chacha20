@@ -12,3 +12,7 @@ test/sim_build
 test/results.xml
 test/gate_level_netlist.v
 *.log
+log.txt
+worst.txt
+
+.*
