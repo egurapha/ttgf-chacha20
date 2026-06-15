@@ -117,13 +117,13 @@ module chacha20_controller (
                     if (rx_valid) begin
                         case (cmd_r)
                             CMD_LOAD_KEY: begin
-                                key_r[8*byte_offset+:8] <= rx_data;
+                                key_r <= {rx_data, key_r[255:8]};
                             end
                             CMD_LOAD_NONCE: begin
-                                nonce_r[8*byte_offset+:8] <= rx_data;
+                                nonce_r <= {rx_data, nonce_r[95:8]};
                             end
                             CMD_LOAD_CTR: begin
-                                ctr_r[8*byte_offset+:8] <= rx_data;
+                                ctr_r <= {rx_data, ctr_r[31:8]};
                             end
                             CMD_GEN: begin
                                 blocks_left <= rx_data;
