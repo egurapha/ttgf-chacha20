@@ -165,6 +165,8 @@ module chacha20_core (
         if (!rst_n) begin
             fsm <= IDLE;
             done_r <= 1'b0;
+            step  <= '0;
+            stage <= '0;
         end else begin
             case (fsm)
                 IDLE: begin

@@ -81,6 +81,16 @@ module chacha20_controller (
             err <= 1'b0;
             done_prev <= 1'b0;
             pending <= 1'b0;
+            core_start  <= 1'b0;
+            tx_send     <= 1'b0;
+            tx_data     <= '0;
+            cmd_r       <= '0;
+            payload_cnt <= '0;
+            byte_offset <= '0;
+            blocks_left <= '0;
+            crypt_len   <= '0;
+            ks_idx      <= '0;
+            d_in        <= '0;
         end else begin
             core_start <= 1'b0;
             tx_send <= 1'b0;
