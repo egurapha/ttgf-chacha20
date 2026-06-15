@@ -24,7 +24,8 @@ module tt_um_egurapha_chacha20 #(
     logic [ 95:0] core_nonce;
     logic [ 31:0] core_counter;
     logic core_start, core_done;
-    logic [511:0] core_block;
+    logic [31:0] core_block_word;
+    logic [3:0] core_word_idx;
     logic _unused;
 
     // Routing.
@@ -63,7 +64,8 @@ module tt_um_egurapha_chacha20 #(
         .counter(core_counter),
         .start(core_start),
         .done(core_done),
-        .block(core_block)
+        .word_idx(core_word_idx),
+        .block_word(core_block_word)
     );
 
     chacha20_controller u_ctrl (
@@ -79,7 +81,8 @@ module tt_um_egurapha_chacha20 #(
         .core_counter(core_counter),
         .core_start(core_start),
         .core_done(core_done),
-        .core_block(core_block),
+        .core_word_idx(core_word_idx),
+        .core_block_word(core_block_word),
         .busy(busy),
         .err(err)
     );

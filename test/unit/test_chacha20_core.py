@@ -27,7 +27,7 @@ from pathlib import Path
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, RisingEdge, with_timeout
+from cocotb.triggers import ClockCycles, RisingEdge, Timer, with_timeout
 
 import chacha20_ref
 
@@ -52,7 +52,15 @@ async def run_block(dut, key: bytes, counter: int, nonce: bytes) -> int:
     # The timeout guards against a hung FSM (latency is ~22 cycles).
     await with_timeout(RisingEdge(dut.done), 1, "us")
 
-    return int(dut.block.value)
+    # The core now exposes one 32-bit word at a time (block_word) selected by
+    # word_idx, instead of a 512-bit block bus. Read all 16 words and reassemble
+    # the same little-endian-packed 512-bit value (word i at bits [32*i +: 32]).
+    block_int = 0
+    for w in range(16):
+        dut.word_idx.value = w
+        await Timer(1, unit="ns")  # block_word is combinational on word_idx
+        block_int |= int(dut.block_word.value) << (32 * w)
+    return block_int
 
 
 async def reset(dut):

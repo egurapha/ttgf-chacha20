@@ -11,7 +11,8 @@ module chacha20_controller (
     input logic rst_n,
     // core.
     input logic core_done,
-    input logic [511:0] core_block,
+    input logic [31:0] core_block_word,  // selected keystream word from the core
+    output logic [3:0] core_word_idx,    // which 32-bit word to read
     output logic [255:0] core_key,
     output logic [95:0] core_nonce,
     output logic [31:0] core_counter,
@@ -68,8 +69,10 @@ module chacha20_controller (
     assign core_nonce = nonce_r;
     assign core_counter = ctr_r;
 
-    // keystream block.
-    assign ks_byte = core_block[8*ks_idx+:8];
+    // keystream byte: ask the core for the word (ks_idx[5:2]), then pick the
+    // byte within it (ks_idx[1:0]) — a small 4:1 mux instead of a 64:1 on 512 bits.
+    assign core_word_idx = ks_idx[5:2];
+    assign ks_byte = core_block_word[8*ks_idx[1:0]+:8];
 
     // Main.
     always_ff @(posedge clk) begin

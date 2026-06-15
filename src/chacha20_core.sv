@@ -13,9 +13,10 @@ module chacha20_core (
     input logic [95:0] nonce,
     input logic [31:0] counter,
     input logic start,
+    input logic [3:0] word_idx,  // which 32-bit keystream word the controller wants
     // Output.
     output logic done,
-    output logic [511:0] block  // keystream block.
+    output logic [31:0] block_word  // = s[word_idx] + iw[word_idx]
 );
     // Registers.
     logic [31:0] s[16];  // 32 bits, 16 element state matrix.
@@ -92,6 +93,18 @@ module chacha20_core (
         .d_out(d3_out)
     );
 
+    // Selected keystream word = s[word_idx] + iw[word_idx]. Only the word the
+    // controller is currently reading is computed (one adder, 16:1 operand
+    // muxes) instead of all 16 words on a 512-bit bus behind a 64:1 byte mux.
+    logic [31:0] s_sel, iw_sel;
+    assign s_sel  = s[word_idx];
+    assign iw_sel = iw[word_idx];
+    adder32 u_block_add (
+        .a  (s_sel),
+        .b  (iw_sel),
+        .sum(block_word)
+    );
+
     // Routing.
     always_comb begin
         // Initial State Addition.
@@ -107,10 +120,6 @@ module chacha20_core (
         iw[12] = counter;
         for (int i = 0; i < 3; i++) begin
             iw[13+i] = nonce[32*i+:32];
-        end
-        // add to state.
-        for (int i = 0; i < 16; i++) begin
-            block[32*i+:32] = s[i] + iw[i];
         end
 
         // Quarter Round.
