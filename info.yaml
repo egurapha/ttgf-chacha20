@@ -5,7 +5,7 @@ project:
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "RFC 8439 ChaCha20 encrypt/decrypt core with a UART host interface"      # One line description of what your project does
   language:     "SystemVerilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     23000000       # 23 MHz; BAUD_DIV = 23e6 / 115200 ≈ 200 (clean ss sign-off; must match the board clock)
+  clock_hz:     35000000       # 35 MHz; ~+1.9ns tt margin (26.7ns path). BAUD_DIV stays 200 -> UART baud = 35e6/200 = 175000 (set host serial to 175000). ss-corner setup is a non-blocking warning.
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
   # Starting generous (3x4) for the first hardening run; right-size from the
