@@ -79,7 +79,11 @@ def tx_monitor(dut, sink):
 @cocotb.test()
 async def full_chip_gen(dut):
     """Load key/nonce/counter + GEN over the serial pins; verify keystream prefix."""
-    clock = Clock(dut.clk, 20, unit="ns")  # 50 MHz (matches BAUD_DIV=434)
+    # 100ns sim clock: NOT the silicon clock — it only needs to be slow enough
+    # for the gate-level netlist's unit-delay paths (-DUNIT_DELAY=#1, ~1ns/cell)
+    # to settle. The worst path is ~20 cells deep, so a 20ns clock raced it and
+    # control flops miscaptured (gate-level produced 0 bytes). 100ns is ~5x margin.
+    clock = Clock(dut.clk, 100, unit="ns")
     cocotb.start_soon(clock.start())
 
     # Reset; RX idles high.
