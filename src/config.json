@@ -20,11 +20,8 @@
   "CLOCK_PERIOD": 43,
 
   "//": "Hold slack margin - Increase them in case you are getting hold violations.",
-  "//": "Lowered from the TT default 0.1/0.05: that over-padded the setup-critical",
-  "//": "path with ~21ns of dlyb hold buffers (path grew as target+14ns). 0.02 keeps",
-  "//": "a cushion (0 is the upstream OpenLane default). MUST verify hold>=0 all corners.",
-  "PL_RESIZER_HOLD_SLACK_MARGIN": 0.02,
-  "GRT_RESIZER_HOLD_SLACK_MARGIN": 0.02,
+  "PL_RESIZER_HOLD_SLACK_MARGIN": 0.1,
+  "GRT_RESIZER_HOLD_SLACK_MARGIN": 0.05,
 
   "//": "RUN_LINTER, LINTER_INCLUDE_PDK_MODELS - Disabling the linter is not recommended!",
   "RUN_LINTER": 1,

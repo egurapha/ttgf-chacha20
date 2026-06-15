@@ -10,7 +10,7 @@ project:
   # How many tiles your design occupies? A single tile is about 340x160 uM.
   # Starting generous (3x4) for the first hardening run; right-size from the
   # utilization report (design is ~2000 FFs + a 4-wide ARX datapath).
-  tiles: "3x4"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
+  tiles: "4x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_egurapha_chacha20"
