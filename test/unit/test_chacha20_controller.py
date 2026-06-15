@@ -366,6 +366,7 @@ def test_chacha20_controller():
             src / "chacha20_controller.sv",
             src / "chacha20_core.sv",
             src / "quarter_round.sv",
+            src / "adder32.sv",
         ],
         hdl_toplevel="tb_controller_core",
         build_dir=build_dir,

@@ -39,6 +39,9 @@ module uart_tx #(
         if (!rst_n) begin
             tx  <= 1'b1;
             fsm <= IDLE;
+            baud_cnt <= '0;
+            bit_cnt  <= '0;
+            shift    <= '0;
         end else begin
             if (fsm == IDLE || tick) begin
                 baud_cnt <= '0;

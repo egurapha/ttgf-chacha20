@@ -11,7 +11,8 @@ module chacha20_controller (
     input logic rst_n,
     // core.
     input logic core_done,
-    input logic [511:0] core_block,
+    input logic [31:0] core_block_word,  // selected keystream word from the core
+    output logic [3:0] core_word_idx,    // which 32-bit word to read
     output logic [255:0] core_key,
     output logic [95:0] core_nonce,
     output logic [31:0] core_counter,
@@ -68,8 +69,10 @@ module chacha20_controller (
     assign core_nonce = nonce_r;
     assign core_counter = ctr_r;
 
-    // keystream block.
-    assign ks_byte = core_block[8*ks_idx+:8];
+    // keystream byte: ask the core for the word (ks_idx[5:2]), then pick the
+    // byte within it (ks_idx[1:0]) — a small 4:1 mux instead of a 64:1 on 512 bits.
+    assign core_word_idx = ks_idx[5:2];
+    assign ks_byte = core_block_word[8*ks_idx[1:0]+:8];
 
     // Main.
     always_ff @(posedge clk) begin
@@ -78,6 +81,16 @@ module chacha20_controller (
             err <= 1'b0;
             done_prev <= 1'b0;
             pending <= 1'b0;
+            core_start  <= 1'b0;
+            tx_send     <= 1'b0;
+            tx_data     <= '0;
+            cmd_r       <= '0;
+            payload_cnt <= '0;
+            byte_offset <= '0;
+            blocks_left <= '0;
+            crypt_len   <= '0;
+            ks_idx      <= '0;
+            d_in        <= '0;
         end else begin
             core_start <= 1'b0;
             tx_send <= 1'b0;
@@ -117,13 +130,13 @@ module chacha20_controller (
                     if (rx_valid) begin
                         case (cmd_r)
                             CMD_LOAD_KEY: begin
-                                key_r[8*byte_offset+:8] <= rx_data;
+                                key_r <= {rx_data, key_r[255:8]};
                             end
                             CMD_LOAD_NONCE: begin
-                                nonce_r[8*byte_offset+:8] <= rx_data;
+                                nonce_r <= {rx_data, nonce_r[95:8]};
                             end
                             CMD_LOAD_CTR: begin
-                                ctr_r[8*byte_offset+:8] <= rx_data;
+                                ctr_r <= {rx_data, ctr_r[31:8]};
                             end
                             CMD_GEN: begin
                                 blocks_left <= rx_data;

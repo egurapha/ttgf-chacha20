@@ -41,6 +41,9 @@ module uart_rx #(
             rx_sync <= 2'b11;
             valid <= 1'b0;
             fsm <= IDLE;
+            baud_cnt <= '0;
+            bit_cnt  <= '0;
+            shift    <= '0;
         end else begin
             rx_sync <= {rx_sync[0], rx};  // shift the rx signal.
             valid   <= 1'b0;

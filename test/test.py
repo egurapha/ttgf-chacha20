@@ -22,7 +22,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 sys.path.insert(0, os.path.dirname(__file__))  # make chacha20_ref importable
 import chacha20_ref
 
-BAUD_DIV = 87  # silicon default (10 MHz / 115200; baked into the gate-level netlist)
+BAUD_DIV = 200  # silicon default (23 MHz / 115200; baked into the gate-level netlist)
 RX_BIT = 3  # ui_in[3]
 TX_BIT = 4  # uo_out[4]
 
@@ -79,7 +79,11 @@ def tx_monitor(dut, sink):
 @cocotb.test()
 async def full_chip_gen(dut):
     """Load key/nonce/counter + GEN over the serial pins; verify keystream prefix."""
-    clock = Clock(dut.clk, 20, unit="ns")  # 50 MHz (matches BAUD_DIV=434)
+    # 100ns sim clock: NOT the silicon clock — it only needs to be slow enough
+    # for the gate-level netlist's unit-delay paths (-DUNIT_DELAY=#1, ~1ns/cell)
+    # to settle. The worst path is ~20 cells deep, so a 20ns clock raced it and
+    # control flops miscaptured (gate-level produced 0 bytes). 100ns is ~5x margin.
+    clock = Clock(dut.clk, 100, unit="ns")
     cocotb.start_soon(clock.start())
 
     # Reset; RX idles high.
@@ -90,6 +94,26 @@ async def full_chip_gen(dut):
     await ClockCycles(dut.clk, 5)
     dut.rst_n.value = 1
     await ClockCycles(dut.clk, 2)
+
+    # --- DIAG (disabled): logs top-level control pins (busy/err/tx) on every
+    # change. Used to diagnose the gate-level X-propagation bug (outputs stuck
+    # at X). Left here, commented out, as a handy probe for future gate debug.
+    # async def _diag():
+    #     cyc = 0
+    #     prev = None
+    #     while True:
+    #         await RisingEdge(dut.clk)
+    #         cyc += 1
+    #         try:
+    #             v = int(dut.uo_out.value)
+    #             tag = f"uo_out={v:08b} busy={v & 1} err={(v >> 1) & 1} tx={(v >> 4) & 1}"
+    #         except ValueError:
+    #             tag = f"uo_out=X (raw={dut.uo_out.value})"
+    #         if tag != prev:
+    #             dut._log.info(f"[diag] cyc={cyc} {tag}")
+    #             prev = tag
+    #
+    # cocotb.start_soon(_diag())
 
     key = bytes(range(32))
     nonce = bytes(range(12))

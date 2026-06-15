@@ -5,7 +5,7 @@ project:
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "RFC 8439 ChaCha20 encrypt/decrypt core with a UART host interface"      # One line description of what your project does
   language:     "SystemVerilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     10000000       # 10 MHz; BAUD_DIV = 10e6 / 115200 ≈ 87 (GF180 closes timing here; must match the board clock)
+  clock_hz:     23000000       # 23 MHz; BAUD_DIV = 23e6 / 115200 ≈ 200 (clean ss sign-off; must match the board clock)
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
   # Starting generous (3x4) for the first hardening run; right-size from the
@@ -23,6 +23,7 @@ project:
     - "chacha20_controller.sv"
     - "chacha20_core.sv"
     - "quarter_round.sv"
+    - "adder32.sv"
     - "uart_rx.sv"
     - "uart_tx.sv"
 

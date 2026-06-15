@@ -187,6 +187,7 @@ def test_full_chip():
             src / "chacha20_controller.sv",
             src / "chacha20_core.sv",
             src / "quarter_round.sv",
+            src / "adder32.sv",
             src / "uart_rx.sv",
             src / "uart_tx.sv",
         ],

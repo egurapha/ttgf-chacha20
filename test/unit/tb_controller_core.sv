@@ -34,14 +34,16 @@ module tb_controller_core (
     logic [ 31:0] core_counter;
     logic         core_start;
     logic         core_done;
-    logic [511:0] core_block;
+    logic [ 31:0] core_block_word;
+    logic [  3:0] core_word_idx;
 
     chacha20_controller u_ctrl (
-        .clk         (clk),
-        .rst_n       (rst_n),
-        .core_done   (core_done),
-        .core_block  (core_block),
-        .core_key    (core_key),
+        .clk            (clk),
+        .rst_n          (rst_n),
+        .core_done      (core_done),
+        .core_block_word(core_block_word),
+        .core_word_idx  (core_word_idx),
+        .core_key       (core_key),
         .core_nonce  (core_nonce),
         .core_counter(core_counter),
         .core_start  (core_start),
@@ -60,8 +62,9 @@ module tb_controller_core (
         .key    (core_key),
         .nonce  (core_nonce),
         .counter(core_counter),
-        .start  (core_start),
-        .done   (core_done),
-        .block  (core_block)
+        .start    (core_start),
+        .done     (core_done),
+        .word_idx (core_word_idx),
+        .block_word(core_block_word)
     );
 endmodule
