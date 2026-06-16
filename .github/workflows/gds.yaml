@@ -6,7 +6,8 @@ on:
 
 jobs:
   gds:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
+    timeout-minutes: 7200
     steps:
       - name: checkout repo
         uses: actions/checkout@v6
