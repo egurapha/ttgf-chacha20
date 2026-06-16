@@ -190,6 +190,7 @@ def test_full_chip():
             src / "adder32.sv",
             src / "uart_rx.sv",
             src / "uart_tx.sv",
+            src / "parallel_io.sv",
         ],
         hdl_toplevel="tt_um_egurapha_chacha20",
         parameters={"BAUD_DIV": BAUD_DIV},

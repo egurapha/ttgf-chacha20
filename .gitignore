@@ -14,5 +14,5 @@ test/gate_level_netlist.v
 *.log
 log.txt
 worst.txt
-
+logs/
 .*

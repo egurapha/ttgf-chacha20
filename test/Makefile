@@ -6,7 +6,7 @@ SIM ?= icarus
 FST ?= -fst # Use more efficient FST format
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_egurapha_chacha20.sv chacha20_controller.sv chacha20_core.sv quarter_round.sv adder32.sv uart_rx.sv uart_tx.sv
+PROJECT_SOURCES = tt_um_egurapha_chacha20.sv chacha20_controller.sv chacha20_core.sv quarter_round.sv adder32.sv uart_rx.sv uart_tx.sv parallel_io.sv
 
 ifneq ($(GATES),yes)
 
