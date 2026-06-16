@@ -21,16 +21,14 @@ jobs:
 
   precheck:
     needs: gds
-    runs-on: self-hosted
-    timeout-minutes: 7200
+    runs-on: ubuntu-24.04
     steps:
       - name: Run Tiny Tapeout Precheck
         uses: TinyTapeout/tt-gds-action/precheck@ttgf26a
 
   gl_test:
     needs: gds
-    runs-on: self-hosted
-    timeout-minutes: 7200
+    runs-on: ubuntu-24.04
     steps:
       - name: checkout repo
         uses: actions/checkout@v6
@@ -42,8 +40,7 @@ jobs:
 
   viewer:
     needs: gds
-    runs-on: self-hosted
-    timeout-minutes: 7200
+    runs-on: ubuntu-24.04
     permissions:
       pages: write      # to deploy to Pages
       id-token: write   # to verify the deployment originates from an appropriate source
