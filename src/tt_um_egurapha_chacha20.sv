@@ -5,10 +5,10 @@
 
 `default_nettype none
 
-// Dual-mode front-end: the chip can be driven over the original UART, or over a
-// faster parallel byte bus, selected by the MODE pin (uio[3]). Both front-ends
-// present the SAME byte interface to chacha20_controller, so the core and
-// controller are identical in either mode.
+// Dual-mode front-end: the chip can be driven over UART or over a faster parallel
+// byte bus, selected by the MODE pin (uio[3]). Both front-ends present the same
+// byte interface to chacha20_controller, so the core and controller are identical
+// in either mode.
 //
 //   MODE = 0 (UART):     RX = ui_in[3], TX = uo_out[4], BUSY/ERR = uo_out[0]/[1]
 //   MODE = 1 (parallel): data-in = ui_in[7:0], data-out = uo_out[7:0],

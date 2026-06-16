@@ -5,15 +5,14 @@
 
 `default_nettype none
 
-// Parallel byte front-end: a synchronous drop-in alternative to the UART.
-// Presents the SAME byte interface to chacha20_controller as uart_rx/uart_tx
-// (rx_data/rx_valid in, tx_data/tx_send/tx_busy out), but moves a whole byte
-// per clock instead of serializing 10 bit-times. The controller cannot tell
-// which front-end it is talking to.
+// Parallel byte front-end: a synchronous alternative to the UART. Presents the
+// same byte interface to chacha20_controller as uart_rx/uart_tx (rx_data/rx_valid
+// in, tx_data/tx_send/tx_busy out), but moves a whole byte per clock instead of
+// serializing 10 bit-times.
 //
 // Input  (host -> chip): the host drives `pdata_in` and pulses `wr` for one
 //   cycle; the byte is captured on that clock edge (rx_valid pulses with it).
-//   No baud/oversampling/framing — the shared clock + strobe define validity.
+//   No baud, oversampling, or framing: the shared clock and strobe define validity.
 //
 // Output (chip -> host): on `tx_send` the byte is driven on `pdata_out` and
 //   `valid` is held high for (hold_sel + 1) clock cycles. The hold gives the
@@ -63,7 +62,7 @@ module parallel_io (
     logic [1:0]  hold_n;   // latched at send time so a mid-byte pin change is harmless
 
     assign valid     = (state == P_SEND);
-    assign tx_busy   = (state == P_SEND);  // controller waits while we hold the byte
+    assign tx_busy   = (state == P_SEND);  // controller stalls while the byte is held
     assign pdata_out = out_byte;           // holds last byte; ignored when !valid
 
     always_ff @(posedge clk) begin

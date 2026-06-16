@@ -3,13 +3,11 @@ project:
   title:        "ChaCha20"      # Project title
   author:       "Raphael Eguchi"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "RFC 8439 ChaCha20 encrypt/decrypt core with a UART host interface"      # One line description of what your project does
+  description:  "RFC 8439 ChaCha20 stream-cipher core with a UART or parallel host interface"      # One line description of what your project does
   language:     "SystemVerilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     35000000       # 35 MHz board clock. UART baud = clock / BAUD_DIV = 35e6 / 200 = 175000.
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
-  # 3x4: this design is wire-bound (~2000 FFs + a 512-bit ARX datapath), so it
-  # needs the routing area even though cell utilization is low.
   tiles: "3x4"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:

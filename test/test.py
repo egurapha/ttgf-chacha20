@@ -3,8 +3,8 @@
 """Tiny Tapeout full-chip test (Makefile flow: tb.v + this module).
 
 Two GEN smoke tests against the hardened netlist, one per interface:
-  * full_chip_gen          — UART path (RX=ui_in[3], TX=uo_out[4]), bit-serial.
-  * full_chip_parallel_gen — parallel byte bus (MODE=uio[3]=1, WR/VALID handshake).
+  * full_chip_gen: UART path (RX=ui_in[3], TX=uo_out[4]), bit-serial.
+  * full_chip_parallel_gen: parallel byte bus (MODE=uio[3]=1, WR/VALID handshake).
 Each loads key/nonce/counter + GEN and checks a keystream prefix vs chacha20_ref.
 This is what the TT `top-level` CI job and gate-level sign-off (`make GATES=yes`)
 run against the hardened netlist; the exhaustive suite lives in test/unit/.
@@ -44,7 +44,7 @@ PAR_GAP = 8       # idle cycles between parallel bytes (covers controller settle
 def _tx(dut):
     # Gate-level sim leaves uo_out with X bits right after reset (cells settle a
     # cycle later than RTL). Tolerate that: an unresolved bus reads as idle-high
-    # (1), so the monitor simply waits through the startup-X window.
+    # (1), so the monitor waits through the startup-X window.
     try:
         return (int(dut.uo_out.value) >> TX_BIT) & 1
     except ValueError:
@@ -176,7 +176,7 @@ async def full_chip_parallel_gen(dut):
     """GEN smoke test over the PARALLEL interface (MODE=1) on the hardened netlist.
 
     Confirms the parallel front-end survives synthesis (no gate-level X-hang) and
-    streams correct keystream — the parallel analogue of full_chip_gen.
+    streams correct keystream; the parallel analogue of full_chip_gen.
     """
     cocotb.start_soon(Clock(dut.clk, 100, unit="ns").start())
 

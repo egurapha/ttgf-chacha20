@@ -155,7 +155,7 @@ async def parallel_crypt_roundtrip(dut):
     """Encrypt a message over the parallel bus, then decrypt it back.
 
     Exercises the bidirectional CRYPT interleave (plaintext in / ciphertext out)
-    over the parallel front-end — a path GEN does not cover.
+    over the parallel front-end, a path GEN does not cover.
     """
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
 

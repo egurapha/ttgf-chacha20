@@ -3,11 +3,11 @@
 """Unit test for the `parallel_io` front-end.
 
 Verifies the parallel byte interface in isolation (no core/controller):
-  * Input  — a byte on `pdata_in` is captured on the `wr` strobe and presented
+  * Input: a byte on `pdata_in` is captured on the `wr` strobe and presented
     on rx_data/rx_valid (the same contract uart_rx gives the controller).
-  * Bubbles — gaps (wr low) between bytes are tolerated; only wr=1 cycles count.
-  * Output — on tx_send the byte is driven on pdata_out and `valid`/`tx_busy`
-    are held for exactly (hold_sel + 1) cycles, for each hold_sel 0..3.
+  * Bubbles: gaps (wr low) between bytes are tolerated; only wr=1 cycles count.
+  * Output: on tx_send the byte is driven on pdata_out and `valid`/`tx_busy`
+    are held for (hold_sel + 1) cycles, for each hold_sel 0..3.
 
 Run from the test/ directory:
     ./run_unit_tests.sh -k parallel_io
