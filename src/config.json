@@ -16,7 +16,7 @@
   "PL_TARGET_DENSITY_PCT": 60,
 
   "//": "CLOCK_PERIOD - Increase this in case you are getting setup time violations.",
-  "//": "The value is in nanoseconds, so 20ns == 50MHz. 28ns == ~35MHz target. The 30ns harden already hit a 26.68ns tt path (CI-clean at 33MHz), which extrapolates to +1.9ns margin at 35MHz, so 28ns should close with a head start; main risk is congestion from the tighter push (watch error.log). ss-corner setup remains a non-blocking warning.",
+  "//": "The value is in nanoseconds, so 20ns == 50MHz. 28ns == ~35MHz (closes the typical corner; the slow (ss) corner is a non-blocking setup warning).",
   "CLOCK_PERIOD": 28,
 
   "//": "Hold slack margin - Increase them in case you are getting hold violations.",
