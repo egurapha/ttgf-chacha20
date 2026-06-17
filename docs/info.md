@@ -114,9 +114,11 @@ A faster byte-at-a-time interface for a host that shares the chip's clock.
   bytes.
 
 Host requirements in parallel mode: drive MODE high before operating; pulse WR
-for exactly one cycle per byte; wait for BUSY low between commands; and for
-`CRYPT`, wait for the core to compute the first block before feeding data (the
-controller does not accept input while it is computing a block).
+for exactly one cycle per byte; and wait for BUSY low between commands. The
+`CRYPT` data phase can be streamed back to back (one plaintext byte in, one
+ciphertext byte out) with no pacing at the 64-byte block boundaries: the
+controller holds a byte that arrives while it is recomputing the next keystream
+block.
 
 ## External hardware
 

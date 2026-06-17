@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: © 2026 Raphael Eguchi
 # SPDX-License-Identifier: Apache-2.0
-"""Full-chip serial sign-off (SPEC section 7.6).
+"""Full-chip serial sign-off over the real UART pins.
 
 Drives ONLY the real TT pins of tt_um_egurapha_chacha20 — RX on ui_in[3], TX on
 uo_out[4] — through a bit-level serial driver and monitor. This exercises the
@@ -8,7 +8,7 @@ complete chain end to end: pin -> uart_rx -> chacha20_controller -> chacha20_cor
 -> uart_tx -> pin, including the pin mapping itself.
 
 Scoreboarded against chacha20_ref. Built with a small BAUD_DIV (the top is
-parameterised) so a real-serial test runs quickly; the silicon default is 434.
+parameterised) so a real-serial test runs quickly; the silicon default is 200.
 
 Run from the test/ directory:
     ./run_unit_tests.sh -k full_chip

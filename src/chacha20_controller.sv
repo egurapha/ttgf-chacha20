@@ -228,6 +228,14 @@ module chacha20_controller (
                     end
                 end
                 RUN_CRYPT: begin
+                    // Hold a data byte that arrives during the block recompute.
+                    // CRYPT has no separate input buffer; pending/d_in double as a
+                    // 1-byte holding register, so a fast parallel host
+                    // streaming across a 64-byte boundary does not lose this byte.
+                    if (rx_valid && !pending) begin
+                        d_in    <= rx_data;
+                        pending <= 1'b1;
+                    end
                     if (core_done && !done_prev) begin
                         fsm <= CRYPT_DATA;
                     end

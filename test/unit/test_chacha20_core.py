@@ -10,7 +10,7 @@ Two checks:
 runs 20 round-cycles per block, so the test drives a clock, resets, pulses
 `start`, waits for `done`, then reads `block`.
 
-Bus packing (SPEC section 1.1): word `i` sits at bit `32*i`, little-endian — so a
+Bus packing: word `i` sits at bit `32*i`, little-endian, so a
 32-byte key maps to the 256-bit bus as `int.from_bytes(key, "little")`, and the
 512-bit `block` output decodes back the same way.
 

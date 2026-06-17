@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: © 2026 Raphael Eguchi
 # SPDX-License-Identifier: Apache-2.0
-"""Unit test for the `uart_tx` module (SPEC section 7.3).
+"""Unit test for the `uart_tx` module.
 
 Checks:
   * Single-byte framing: each transmitted byte decodes back to the value sent,

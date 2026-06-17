@@ -2,7 +2,7 @@
  * Copyright (c) 2026 Raphael Eguchi
  * SPDX-License-Identifier: Apache-2.0
  *
- * Loopback harness for the UART pair (SPEC section 7.4).
+ * Loopback harness for the UART pair.
  *
  * Connects uart_tx's serial output directly to uart_rx's serial input (the
  * `line` net), so a byte driven into the transmitter should reappear, intact,
