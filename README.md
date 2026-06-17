@@ -17,7 +17,7 @@ The chip runs the ChaCha20 block function on-chip and exposes two operations:
 
 You load the key, nonce, and counter and issue commands from a host over either an 8N1 UART or a faster synchronous parallel byte bus, chosen at runtime by the MODE pin.
 
-The **[datasheet](docs/info.md)** is the place to start if you want to talk to the chip: it has the command protocol, the pin map, and worked examples.
+See the [docs](docs/info.md) for the command protocol, pin map, and examples.
 
 | PDK | Shuttle | Tiles | Clock |
 | --- | --- | --- | --- |
@@ -25,17 +25,9 @@ The **[datasheet](docs/info.md)** is the place to start if you want to talk to t
 
 ## Repository
 
-The Verilog sources are in [`src/`](src) (a ChaCha20 block engine, a command FSM, and the UART and parallel front-ends); the datasheet is in [`docs/`](docs); and the cocotb testbenches are in [`test/`](test). To run the test suite (Icarus Verilog and cocotb, both from the OSS CAD Suite):
+The Verilog sources are in [`src/`](src) (a ChaCha20 block engine, a command FSM, and the UART and parallel front-ends); the documentation is in [`docs/`](docs); and the cocotb testbenches are in [`test/`](test). To run the test suite (Icarus Verilog and cocotb, both from the OSS CAD Suite):
 
 ```sh
 cd test
 ./run_unit_tests.sh
 ```
-
-## Tiny Tapeout
-
-Tiny Tapeout makes it easier and cheaper to get digital and analog designs manufactured on a real chip. Learn more at [tinytapeout.com](https://tinytapeout.com).
-
-- [Project datasheet](docs/info.md)
-- [FAQ](https://tinytapeout.com/faq/)
-- [Submit your design](https://app.tinytapeout.com/)
