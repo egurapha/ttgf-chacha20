@@ -70,7 +70,7 @@ module chacha20_controller (
     assign core_counter = ctr_r;
 
     // keystream byte: ask the core for the word (ks_idx[5:2]), then pick the
-    // byte within it (ks_idx[1:0]) — a small 4:1 mux instead of a 64:1 on 512 bits.
+    // byte within it (ks_idx[1:0]): a small 4:1 mux instead of a 64:1 on 512 bits.
     assign core_word_idx = ks_idx[5:2];
     assign ks_byte = core_block_word[8*ks_idx[1:0]+:8];
 

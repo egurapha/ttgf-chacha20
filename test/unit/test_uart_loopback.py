@@ -3,7 +3,7 @@
 """UART loopback test: uart_tx.tx -> uart_rx.rx.
 
 Sends bytes into the transmitter and checks that the receiver recovers each one
-identically — proving uart_rx (synchronizer, mid-bit sampling, framing) against
+identically, proving uart_rx (synchronizer, mid-bit sampling, framing) against
 the already-verified uart_tx over a real serial wire.
 
 Runs at two BAUD_DIVs (a small one for speed, and 434) via two pytest entry

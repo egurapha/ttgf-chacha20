@@ -85,7 +85,7 @@ A minimal `GEN` run (using a known key/nonce/counter) is:
 5. Read the 64 keystream bytes that stream back.
 
 The output matches the ChaCha20 keystream for that key/nonce/counter (see the
-RFC 8439 test vectors, or `chacha20.py` in the repository, which is the bit-exact
+RFC 8439 test vectors, or `test/chacha20_ref.py` in the repository, which is the bit-exact
 reference the test suite checks against). To encrypt, use `CRYPT` (`0x05`, the
 2-byte length, then the data); to decrypt, run `CRYPT` again on the ciphertext.
 

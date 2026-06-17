@@ -67,7 +67,7 @@ async def send_byte(dut, value: int):
 
 
 async def uart_recv(dut) -> int:
-    """Recover one byte from the `tx` line — a software UART receiver.
+    """Recover one byte from the `tx` line: a software UART receiver.
 
     Locks onto the start-bit falling edge, waits to the centre of bit 0, then
     samples every `BAUD_DIV` cycles, LSB-first. Because it syncs to the real
@@ -102,8 +102,8 @@ async def single_byte_framing(dut):
 async def bit_period_timing(dut):
     """Every `tx` transition must be exactly BAUD_DIV cycles apart.
 
-    Sending 0x55 yields a fully alternating frame — start(0), data 1,0,1,0,1,0,
-    1,0 (LSB-first), stop(1) — so the line is 0,1,0,1,0,1,0,1,0,1 across the ten
+    Sending 0x55 yields a fully alternating frame: start(0), data 1,0,1,0,1,0,
+    1,0 (LSB-first), stop(1), so the line is 0,1,0,1,0,1,0,1,0,1 across the ten
     bit slots and toggles at all nine internal boundaries. Measuring the spacing
     of those nine edges checks the bit period directly, independent of any
     assumption baked into the byte-level monitor.

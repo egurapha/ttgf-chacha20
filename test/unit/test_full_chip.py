@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Full-chip serial sign-off over the real UART pins.
 
-Drives ONLY the real TT pins of tt_um_egurapha_chacha20 — RX on ui_in[3], TX on
-uo_out[4] — through a bit-level serial driver and monitor. This exercises the
+Drives ONLY the real TT pins of tt_um_egurapha_chacha20: RX on ui_in[3], TX on
+uo_out[4], through a bit-level serial driver and monitor. This exercises the
 complete chain end to end: pin -> uart_rx -> chacha20_controller -> chacha20_core
 -> uart_tx -> pin, including the pin mapping itself.
 

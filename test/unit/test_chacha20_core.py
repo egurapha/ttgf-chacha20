@@ -47,7 +47,7 @@ async def run_block(dut, key: bytes, counter: int, nonce: bytes) -> int:
 
     # Wait for the block to complete. `done` is held high from the previous block
     # until the next `start`, but a *rising* edge only fires on a genuine 0->1
-    # transition — so the stale high is ignored: after `start` the core drops `done`
+    # transition, so the stale high is ignored: after `start` the core drops `done`
     # (in INIT) and raises it again (in DONE), and we catch exactly that rise.
     # The timeout guards against a hung FSM (latency is ~22 cycles).
     await with_timeout(RisingEdge(dut.done), 1, "us")
