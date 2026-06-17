@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: © 2026 Raphael Eguchi
 # SPDX-License-Identifier: Apache-2.0
-"""UART loopback test (SPEC section 7.4): uart_tx.tx -> uart_rx.rx.
+"""UART loopback test: uart_tx.tx -> uart_rx.rx.
 
 Sends bytes into the transmitter and checks that the receiver recovers each one
-identically — proving uart_rx (synchronizer, mid-bit sampling, framing) against
+identically, proving uart_rx (synchronizer, mid-bit sampling, framing) against
 the already-verified uart_tx over a real serial wire.
 
-Runs at two BAUD_DIVs (a small one for speed, the real 434) via two pytest entry
+Runs at two BAUD_DIVs (a small one for speed, and 434) via two pytest entry
 points; BAUD_DIV comes from the environment so the Python pacing matches the DUT.
 """
 

@@ -1,17 +1,17 @@
 # SPDX-FileCopyrightText: © 2026 Raphael Eguchi
 # SPDX-License-Identifier: Apache-2.0
-"""Unit test for the `chacha20_controller` module — GEN path (SPEC section 7.5).
+"""Unit tests for the `chacha20_controller` module (GEN and CRYPT paths).
 
 Drives the controller at the byte level (rx_data/rx_valid directly, no serial
 timing) through the `tb_controller_core` wrapper, which wires the controller to
 the real `chacha20_core`. The streamed `tx` bytes are snooped on tx_send/tx_data
-and compared against the golden reference `chacha20_ref.chacha20_block()`.
+and compared against the golden reference in `chacha20_ref`.
 
-Covered here (GEN only; CRYPT is added later):
-  * Single-block GEN (N=1): the 64 streamed bytes equal one keystream block.
-  * Multi-block GEN (N>1): 64*N bytes, with the counter incrementing per block.
-  * Randomised key/nonce/counter cross-check against the reference.
-  * GEN N=0: legal no-op, produces no output.
+Covered here:
+  * Single- and multi-block GEN (counter increments per block; N=0 no-op).
+  * Single- and multi-block CRYPT (encrypt, decrypt round-trip, non-aligned L).
+  * Randomised key/nonce/counter cross-checks against the reference.
+  * Error on unknown command, and backpressure (tx_busy) without dropped bytes.
 
 The transmitter is modelled by tying `tx_busy` low (always ready); the
 controller's `!tx_busy && !tx_send` guard still paces output to one byte every
@@ -31,7 +31,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 
 import chacha20_ref
 
-# Command bytes (SPEC section 4).
+# Command bytes.
 CMD_LOAD_KEY = 0x01
 CMD_LOAD_NONCE = 0x02
 CMD_LOAD_CTR = 0x03
@@ -75,10 +75,9 @@ async def send_frame(dut, cmd: int, payload: bytes):
 async def send_data_byte(dut, value: int, gap: int = 130):
     """Feed one CRYPT data byte, then idle for `gap` cycles.
 
-    The controller has no input buffer (SPEC 5.3): it relies on UART being far
-    slower than a block computation, so a new data byte never arrives while it
-    is re-blocking (~22 cycles). The gap models that spacing — comfortably
-    longer than a reblock — so bytes are consumed one at a time, in order.
+    The controller holds at most one byte that arrives while it is re-blocking,
+    so this spacing is not required for correctness; it is kept to keep the byte
+    stream easy to follow (one byte consumed at a time, in order).
     """
     dut.rx_data.value = value
     dut.rx_valid.value = 1

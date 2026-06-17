@@ -2,14 +2,14 @@
  * Copyright (c) 2026 Raphael Eguchi
  * SPDX-License-Identifier: Apache-2.0
  *
- * Test harness for the chacha20_controller unit test (SPEC section 7.5).
+ * Test harness for the chacha20_controller unit test.
  *
  * Wires the real `chacha20_controller` to the real `chacha20_core` over the
  * core handshake (start/done/block + key/nonce/counter), and exposes the
  * controller's byte-level host interface (rx_data/rx_valid, tx_data/tx_send/
  * tx_busy) plus the status pins to the cocotb testbench.
  *
- * No UART modules are involved: per SPEC 7.5 the controller is driven at the
+ * No UART modules are involved: the controller is driven at the
  * byte level (rx_data/rx_valid directly) and the tx stream is snooped on
  * tx_data/tx_send. The transmitter is modelled by the test driving tx_busy.
  */

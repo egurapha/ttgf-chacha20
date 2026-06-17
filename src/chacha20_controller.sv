@@ -70,7 +70,7 @@ module chacha20_controller (
     assign core_counter = ctr_r;
 
     // keystream byte: ask the core for the word (ks_idx[5:2]), then pick the
-    // byte within it (ks_idx[1:0]) — a small 4:1 mux instead of a 64:1 on 512 bits.
+    // byte within it (ks_idx[1:0]): a small 4:1 mux instead of a 64:1 on 512 bits.
     assign core_word_idx = ks_idx[5:2];
     assign ks_byte = core_block_word[8*ks_idx[1:0]+:8];
 
@@ -228,6 +228,14 @@ module chacha20_controller (
                     end
                 end
                 RUN_CRYPT: begin
+                    // Hold a data byte that arrives during the block recompute.
+                    // CRYPT has no separate input buffer; pending/d_in double as a
+                    // 1-byte holding register, so a fast parallel host
+                    // streaming across a 64-byte boundary does not lose this byte.
+                    if (rx_valid && !pending) begin
+                        d_in    <= rx_data;
+                        pending <= 1'b1;
+                    end
                     if (core_done && !done_prev) begin
                         fsm <= CRYPT_DATA;
                     end

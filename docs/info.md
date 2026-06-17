@@ -85,7 +85,7 @@ A minimal `GEN` run (using a known key/nonce/counter) is:
 5. Read the 64 keystream bytes that stream back.
 
 The output matches the ChaCha20 keystream for that key/nonce/counter (see the
-RFC 8439 test vectors, or `chacha20.py` in the repository, which is the bit-exact
+RFC 8439 test vectors, or `test/chacha20_ref.py` in the repository, which is the bit-exact
 reference the test suite checks against). To encrypt, use `CRYPT` (`0x05`, the
 2-byte length, then the data); to decrypt, run `CRYPT` again on the ciphertext.
 
@@ -114,9 +114,11 @@ A faster byte-at-a-time interface for a host that shares the chip's clock.
   bytes.
 
 Host requirements in parallel mode: drive MODE high before operating; pulse WR
-for exactly one cycle per byte; wait for BUSY low between commands; and for
-`CRYPT`, wait for the core to compute the first block before feeding data (the
-controller does not accept input while it is computing a block).
+for exactly one cycle per byte; and wait for BUSY low between commands. The
+`CRYPT` data phase can be streamed back to back (one plaintext byte in, one
+ciphertext byte out) with no pacing at the 64-byte block boundaries: the
+controller holds a byte that arrives while it is recomputing the next keystream
+block.
 
 ## External hardware
 

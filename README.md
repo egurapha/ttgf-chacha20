@@ -1,42 +1,41 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# ChaCha20 stream cipher (Tiny Tapeout)
 
-- [Read the documentation for project](docs/info.md)
+A hardware implementation of the ChaCha20 stream cipher (RFC 8439), built for Tiny Tapeout on the GF180MCU process.
 
-## What is Tiny Tapeout?
+## About ChaCha20
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
+ChaCha20 is a modern stream cipher (Daniel J. Bernstein's refinement of Salsa20), standardized in [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) and widely used in TLS, SSH, and WireGuard. It is an Add-Rotate-XOR (ARX) design: no S-boxes or lookup tables, just additions, bit rotations, and XORs, which makes it compact and fast in hardware. From a 256-bit key, a 96-bit nonce, and a 32-bit block counter it produces a pseudorandom keystream. You encrypt by XORing data with that keystream, and because XOR is self-inverse, decryption is the exact same operation.
 
-To learn more and get started, visit https://tinytapeout.com.
+## What this chip does
 
-## Set up your Verilog project
+The chip runs the ChaCha20 block function on-chip and exposes two operations:
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+- **GEN:** stream out the raw keystream.
+- **CRYPT:** XOR a stream of data with the keystream (encrypt, or decrypt by feeding the ciphertext back in with the same key, nonce, and counter).
 
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
+You load the key, nonce, and counter and issue commands from a host over either an 8N1 UART or a faster synchronous parallel byte bus, chosen at runtime by the MODE pin.
 
-## Enable GitHub actions to build the results page
+The **[datasheet](docs/info.md)** is the place to start if you want to talk to the chip: it has the command protocol, the pin map, and worked examples.
 
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
+| PDK | Shuttle | Tiles | Clock |
+| --- | --- | --- | --- |
+| gf180mcuD (GF180MCU) | TTGF26b | 3x4 | 35 MHz |
 
-## Resources
+## Repository
 
+The Verilog sources are in [`src/`](src) (a ChaCha20 block engine, a command FSM, and the UART and parallel front-ends); the datasheet is in [`docs/`](docs); and the cocotb testbenches are in [`test/`](test). To run the test suite (Icarus Verilog and cocotb, both from the OSS CAD Suite):
+
+```sh
+cd test
+./run_unit_tests.sh
+```
+
+## Tiny Tapeout
+
+Tiny Tapeout makes it easier and cheaper to get digital and analog designs manufactured on a real chip. Learn more at [tinytapeout.com](https://tinytapeout.com).
+
+- [Project datasheet](docs/info.md)
 - [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+- [Submit your design](https://app.tinytapeout.com/)

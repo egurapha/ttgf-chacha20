@@ -1,5 +1,5 @@
 """
-ChaCha20 Stream Cipher — Reference Implementation
+ChaCha20 Stream Cipher: Reference Implementation
 Based on RFC 8439 (https://datatracker.ietf.org/doc/html/rfc8439)
 
 This implementation is meant as a learning tool and reference
@@ -175,7 +175,7 @@ def print_hex(label, data):
 
 
 def test_quarter_round():
-    """RFC 8439 Section 2.1.1 — Quarter Round test."""
+    """RFC 8439 Section 2.1.1: Quarter Round test."""
     print("=" * 60)
     print("TEST: Quarter Round (RFC 8439 section 2.1.1)")
     print("=" * 60)
@@ -229,7 +229,7 @@ def test_quarter_round():
 
 
 def test_chacha20_block():
-    """RFC 8439 Section 2.3.2 — Block function test."""
+    """RFC 8439 Section 2.3.2: Block function test."""
     print("\n" + "=" * 60)
     print("TEST: ChaCha20 Block (RFC 8439 section 2.3.2)")
     print("=" * 60)
@@ -373,7 +373,7 @@ def test_chacha20_block():
 
 
 def test_chacha20_encryption():
-    """RFC 8439 Section 2.4.2 — Encryption test."""
+    """RFC 8439 Section 2.4.2: Encryption test."""
     print("\n" + "=" * 60)
     print("TEST: ChaCha20 Encryption (RFC 8439 section 2.4.2)")
     print("=" * 60)
