@@ -38,9 +38,36 @@ It has three blocks:
 Both front-ends present the identical byte interface to the controller, so the
 core and protocol are the same regardless of which one is used.
 
-The design targets a 35 MHz clock. Throughput is bounded by the host link, not
-the core: the UART runs at 175000 baud (about 17 KB/s), while the parallel bus
-moves a byte every few clocks.
+### Performance
+
+Figures are for the 35 MHz clock and are derived from the design's cycle counts.
+
+The ChaCha20 engine computes a 64-byte block in about 84 cycles, generating
+keystream at roughly 0.76 bytes per cycle (about 27 MB/s). That is the
+theoretical ceiling; in practice throughput is set by the host interface, not the
+cipher.
+
+- **Parallel (MODE = 1):** about 6.5 MB/s for `GEN` at the default hold
+  (`HOLD_SEL = 1`); each output byte costs the hold window plus a share of the
+  per-block keystream recompute. `HOLD_SEL = 0` reaches about 8 MB/s; a longer
+  hold trades speed for settling time. `CRYPT` is lower, since every data byte is
+  a round trip (one byte in, one byte out).
+- **UART (MODE = 0):** 175000 baud, giving about 17.5 KB/s for `GEN` and about
+  8.5 KB/s for `CRYPT`.
+
+These are derived figures, not silicon measurements. Planned validation on the
+Tiny Tapeout FPGA dev kit (iCE40 UP5K, same pin harness):
+
+- [ ] Run the design on the iCE40 dev kit (flash the `fpga` workflow bitstream).
+- [ ] Measure real parallel throughput with the RP2040 host, especially `CRYPT`
+  (host read-to-write turnaround); clock at ~35 MHz so it represents the ASIC.
+- [ ] Determine the `HOLD_SEL` the host reader needs to capture every byte (the
+  host-latency side only; the GF180 output-pad slew is separate and not
+  FPGA-testable).
+- [ ] Validate multi-block `CRYPT` (>64 bytes) end to end with a fast host:
+  confirm no dropped bytes and a correct round trip (exercises the input
+  holding-register fix on real hardware, which the single-block gl_test does not
+  cover).
 
 ### Command protocol
 
