@@ -21,9 +21,8 @@
 //   window. `hold_sel` comes from pins, so the hold is tunable at runtime to
 //   match the output pad's slew behavior.
 //
-// The handshake design (held output for a latency-bound PIO reader, runtime
-// hold, bubble tolerance, contiguous data pins) follows the parallel/PIO
-// interface of the BLAKE2s Tiny Tapeout project by Essenceia:
+// The parallel byte interface (clock-synchronous, aimed at an RP2040 PIO host)
+// follows the approach of the BLAKE2s Tiny Tapeout project by Essenceia:
 //   https://github.com/Essenceia/blake2_asic
 module parallel_io (
     input  logic       clk,
