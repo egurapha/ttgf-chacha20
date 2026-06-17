@@ -56,18 +56,7 @@ cipher.
   8.5 KB/s for `CRYPT`.
 
 These are derived figures, not silicon measurements. Planned validation on the
-Tiny Tapeout FPGA dev kit (iCE40 UP5K, same pin harness):
-
-- [ ] Run the design on the iCE40 dev kit (flash the `fpga` workflow bitstream).
-- [ ] Measure real parallel throughput with the RP2040 host, especially `CRYPT`
-  (host read-to-write turnaround); clock at ~35 MHz so it represents the ASIC.
-- [ ] Determine the `HOLD_SEL` the host reader needs to capture every byte (the
-  host-latency side only; the GF180 output-pad slew is separate and not
-  FPGA-testable).
-- [ ] Validate multi-block `CRYPT` (>64 bytes) end to end with a fast host:
-  confirm no dropped bytes and a correct round trip (exercises the input
-  holding-register fix on real hardware, which the single-block gl_test does not
-  cover).
+Tiny Tapeout FPGA dev kit (iCE40 UP5K, same pin harness).
 
 ### Command protocol
 
