@@ -50,22 +50,9 @@ set by the host interface:
   is lower (each byte is a round trip).
 - **UART (MODE = 0):** 175000 baud, giving ~17.5 KB/s for `GEN` and ~8.5 KB/s for `CRYPT`.
 
-<<<<<<< Updated upstream
-- **Parallel (MODE = 1):** about 6.5 MB/s for `GEN` at the default hold
-  (`HOLD_SEL = 1`); each output byte costs the hold window plus a share of the
-  per-block keystream recompute. `HOLD_SEL = 0` reaches about 8 MB/s; a longer
-  hold trades speed for settling time. `CRYPT` is lower, since every data byte is
-  a round trip (one byte in, one byte out).
-- **UART (MODE = 0):** 175000 baud, giving about 17.5 KB/s for `GEN` and about
-  8.5 KB/s for `CRYPT`.
-
-These are derived figures, not silicon measurements. Planned validation on the
-Tiny Tapeout FPGA dev kit (iCE40 UP5K, same pin harness).
-=======
 Functionally validated on the Tiny Tapeout FPGA breakout (iCE40 UP5K) over both
 interfaces: single- and multi-block `GEN`, `CRYPT`, decrypt round-trip, and
 command-error handling, checked against the reference model.
->>>>>>> Stashed changes
 
 ### Command protocol
 
