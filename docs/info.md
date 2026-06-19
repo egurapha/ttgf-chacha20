@@ -40,13 +40,17 @@ core and protocol are the same regardless of which one is used.
 
 ### Performance
 
-Figures are for the 35 MHz clock and are derived from the design's cycle counts.
+At the 35 MHz target clock, the core computes a 64-byte block in about 84 cycles
+(~0.76 bytes/cycle), a theoretical ceiling of ~27 MB/s. Deliverable throughput is
+set by the host interface:
 
-The ChaCha20 engine computes a 64-byte block in about 84 cycles, generating
-keystream at roughly 0.76 bytes per cycle (about 27 MB/s). That is the
-theoretical ceiling; in practice throughput is set by the host interface, not the
-cipher.
+- **Parallel (MODE = 1):** an estimated ~8 MB/s for `GEN` at `HOLD_SEL = 0`,
+  ~6.5 MB/s at the default `HOLD_SEL = 1`. The workable `HOLD_SEL`, and hence the
+  real rate, depends on output-pad settling and how fast the host reads. `CRYPT`
+  is lower (each byte is a round trip).
+- **UART (MODE = 0):** 175000 baud, giving ~17.5 KB/s for `GEN` and ~8.5 KB/s for `CRYPT`.
 
+<<<<<<< Updated upstream
 - **Parallel (MODE = 1):** about 6.5 MB/s for `GEN` at the default hold
   (`HOLD_SEL = 1`); each output byte costs the hold window plus a share of the
   per-block keystream recompute. `HOLD_SEL = 0` reaches about 8 MB/s; a longer
@@ -57,6 +61,11 @@ cipher.
 
 These are derived figures, not silicon measurements. Planned validation on the
 Tiny Tapeout FPGA dev kit (iCE40 UP5K, same pin harness).
+=======
+Functionally validated on the Tiny Tapeout FPGA breakout (iCE40 UP5K) over both
+interfaces: single- and multi-block `GEN`, `CRYPT`, decrypt round-trip, and
+command-error handling, checked against the reference model.
+>>>>>>> Stashed changes
 
 ### Command protocol
 
